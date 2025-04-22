@@ -4,7 +4,6 @@ import {
   ValidationError,
   AuthenticationError,
   NotFoundError,
-  RedisError,
 } from "../../utils/apiErrors";
 
 const errorHandler: ErrorRequestHandler = (
@@ -13,20 +12,28 @@ const errorHandler: ErrorRequestHandler = (
   res: Response,
   _next: NextFunction,
 ): void => {
-  logger.error("Error Occurred", {
-    method: req.method,
-    url: req.originalUrl,
-    status: req.statusCode,
-    message: err.message,
-    stack: err.stack,
-    headers: req.headers,
-    body: req.body,
-  });
+  logger.error(
+    `Error Occurred:
+    Method: ${req.method}
+    URL: ${req.originalUrl}
+    ErrorType: ${err.name}
+    Message: ${err.message}
+    Details: ${JSON.stringify(err.details, null, 2)}
+    Stack: ${err.stack}
+    Headers: ${JSON.stringify(req.headers, null, 2)}
+    Body: ${JSON.stringify(req.body, null, 2)}
+    Query: ${JSON.stringify(req.query, null, 2)}
+    Params: ${JSON.stringify(req.params, null, 2)}
+    IP: ${req.ip}
+    User Agent: ${req.get('user-agent')}
+    Timestamp: ${new Date().toISOString()}`
+  );
 
   if (err instanceof ValidationError) {
     res.status(400).json({
       error: "Validation Error",
       message: err.message,
+      data: err.details
     });
     return;
   }
