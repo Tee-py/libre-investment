@@ -8,7 +8,10 @@
     "dev": "nodemon --watch 'src/**/*.ts' --watch '.env' --exec 'ts-node' src/api/index.ts",
     "clean": "rimraf dist",
     "lint": "eslint . --ext .ts",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "",

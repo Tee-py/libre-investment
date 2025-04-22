@@ -4,13 +4,14 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     ports:
-      - "3000:3000"
+      - "4000:4000"
     env_file:
       - .env.production
     environment:
       - NODE_ENV=production
+    command: sh -c "npx prisma migrate deploy && npm start"
     restart: unless-stopped
     networks:
       - app-network
