@@ -21,9 +21,12 @@
     "envalid": "^8.0.0",
     "ethers": "^6.13.5",
     "express": "^5.1.0",
+    "express-rate-limit": "^7.1.5",
     "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "prisma": "^6.6.0",
+    "redis": "^4.6.13",
     "siwe": "^3.0.0",
     "winston": "^3.17.0",
     "zod": "^3.24.3"
@@ -31,8 +34,10 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.5",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.14.1",
+    "@types/redis": "^4.0.11",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "eslint": "^8.56.0",
