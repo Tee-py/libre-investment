@@ -14,7 +14,7 @@ export const healthCheck = async (_req: Request, res: Response) => {
         timestamp: Date.now(),
       },
       database: {
-        status: 'down',
+        status: 'up',
         timestamp: Date.now(),
       },
       redis: {
