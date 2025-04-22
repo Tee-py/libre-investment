@@ -1,13 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { AuthenticationError } from "../../utils/apiErrors";
-import { env } from "api/config";
+import { AuthenticationError } from "../../utils/errors";
+import { env } from "../config";
 
 declare global {
   namespace Express {
     interface Request {
       user?: {
         address: string;
+        chainId: number;
       };
     }
   }

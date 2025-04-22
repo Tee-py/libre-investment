@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-// import { prisma } from '../../config/prisma';
+import { prisma } from '../../utils/db';
 import redis from '../../utils/redis';
 import { logger } from '../../utils/logger';
 
@@ -14,7 +14,7 @@ export const healthCheck = async (_req: Request, res: Response) => {
         timestamp: Date.now(),
       },
       database: {
-        status: 'up',
+        status: 'down',
         timestamp: Date.now(),
       },
       redis: {
@@ -24,15 +24,15 @@ export const healthCheck = async (_req: Request, res: Response) => {
     },
   };
 
-//   try {
-//     // Check database connection
-//     await prisma.$queryRaw`SELECT 1`;
-//     healthcheck.checks.database.status = 'up';
-//     healthcheck.checks.database.timestamp = Date.now();
-//   } catch (error) {
-//     logger.error('Database health check failed:', error);
-//     healthcheck.checks.database.status = 'down';
-//   }
+  try {
+    // Check database connection
+    await prisma.$queryRaw`SELECT 1`;
+    healthcheck.checks.database.status = 'up';
+    healthcheck.checks.database.timestamp = Date.now();
+  } catch (error) {
+    logger.error('Database health check failed:', error);
+    healthcheck.checks.database.status = 'down';
+  }
 
   try {
     // Check Redis connection

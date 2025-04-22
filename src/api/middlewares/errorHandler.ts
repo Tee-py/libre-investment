@@ -4,7 +4,8 @@ import {
   ValidationError,
   AuthenticationError,
   NotFoundError,
-} from "../../utils/apiErrors";
+  APIError,
+} from "../../utils/errors";
 
 const errorHandler: ErrorRequestHandler = (
   err: any,
@@ -34,6 +35,14 @@ const errorHandler: ErrorRequestHandler = (
       error: "Validation Error",
       message: err.message,
       data: err.details
+    });
+    return;
+  }
+
+  if (err instanceof APIError) {
+    res.status(400).json({
+      error: "API Error",
+      message: err.message,
     });
     return;
   }
