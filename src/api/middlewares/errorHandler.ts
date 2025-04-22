@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, ErrorRequestHandler } from "express"
-import { logger } from "utils/logger"
-import { ValidationError, AuthenticationError, NotFoundError } from "utils/apiErrors"
+import { logger } from "../../utils/logger"
+import { ValidationError, AuthenticationError, NotFoundError } from "../../utils/apiErrors"
 
 const errorHandler: ErrorRequestHandler = (err: any, req: Request, res: Response, _next: NextFunction): void => {
     logger.error("Error Occurred", {
