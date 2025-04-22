@@ -2,7 +2,7 @@ import { generateNonce, SiweMessage } from "siwe";
 import jwt from "jsonwebtoken";
 import redisClient from "../../utils/redis";
 import { env } from "../config";
-import { AuthenticationError } from "utils/apiErrors";
+import { AuthenticationError } from "../../utils/apiErrors";
 
 const NONCE_EXPIRY = 5 * 60; // 5 minutes
 
