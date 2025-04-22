@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/api/index.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' --watch '.env' --exec 'ts-node' src/api/index.ts",
     "clean": "rimraf dist",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"src/**/*.ts\""
