@@ -11,7 +11,7 @@ export const getNonceSchema = z.object({
 export const loginSchema = z.object({
   body: z.object({
     message: z.string().min(1, "Message is required"),
-    signature: z.string().min(1, "Signature is required")
+    signature: z.string().min(1, "Signature is required"),
   }),
 });
 

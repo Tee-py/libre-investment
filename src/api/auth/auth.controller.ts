@@ -24,7 +24,7 @@ export class AuthController {
       const { message, signature } = req.body;
       const { address, chainId } = await AuthService.verifySignature(
         message,
-        signature
+        signature,
       );
       const token = AuthService.generateToken(address, chainId);
       res.json({ token });

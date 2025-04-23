@@ -18,7 +18,7 @@ app.use(defaultLimiter);
 
 // Routes
 app.use("/api/auth", authLimiter, authRouter);
-app.use("/api/investment", authenticateToken, investmentRouter)
+app.use("/api/investment", authenticateToken, investmentRouter);
 app.use("/api/health", healthRouter);
 
 // Error handler

@@ -4,7 +4,7 @@ import {
   getInvestTransactionSchema,
   GetInvestTransactionRequest,
   getRedeemTransactionSchema,
-  GetRedeemTransactionRequest
+  GetRedeemTransactionRequest,
 } from "./investment.schema";
 import { validate } from "../middlewares/validate";
 
@@ -13,8 +13,13 @@ export class InvestmentController {
     validate(getInvestTransactionSchema),
     async (req: Request & GetInvestTransactionRequest, res: Response) => {
       const { fund, usdAmount } = req.body;
-      const user = req.user!
-      const data = await InvestmentService.getInvestTransaction(user.address, usdAmount, fund, user.chainId)
+      const user = req.user!;
+      const data = await InvestmentService.getInvestTransaction(
+        user.address,
+        usdAmount,
+        fund,
+        user.chainId,
+      );
       res.json(data);
     },
   ];
@@ -23,29 +28,38 @@ export class InvestmentController {
     validate(getRedeemTransactionSchema),
     async (req: Request & GetRedeemTransactionRequest, res: Response) => {
       const { fund, share } = req.body;
-      const user = req.user!
-      const data = await InvestmentService.getRedeemTransaction(user.address, share, fund, user.chainId)
+      const user = req.user!;
+      const data = await InvestmentService.getRedeemTransaction(
+        user.address,
+        share,
+        fund,
+        user.chainId,
+      );
       res.json(data);
     },
   ];
 
-  static publishTransaction = []
+  static publishTransaction = [];
 
   static getInvestorBalance = [
     async (req: Request, res: Response) => {
-      const investor = req.user?.address!
-      const chainId = req.user?.chainId!
-      const { fund } = req.params
-      const result = await InvestmentService.getFundBalance(investor, fund, chainId)
-      res.json(result)
-    }
-  ]
+      const investor = req.user?.address!;
+      const chainId = req.user?.chainId!;
+      const { fund } = req.params;
+      const result = await InvestmentService.getFundBalance(
+        investor,
+        fund,
+        chainId,
+      );
+      res.json(result);
+    },
+  ];
 
   static getFundMetrics = [
     async (req: Request, res: Response) => {
-      const { fund } = req.params
-      const result = await InvestmentService.getFundStats(fund)
-      res.json(result)
-    }
-  ]
+      const { fund } = req.params;
+      const result = await InvestmentService.getFundStats(fund);
+      res.json(result);
+    },
+  ];
 }

@@ -5,6 +5,7 @@ import {
   AuthenticationError,
   NotFoundError,
   APIError,
+  RPCError,
 } from "../../utils/errors";
 
 const errorHandler: ErrorRequestHandler = (
@@ -26,15 +27,15 @@ const errorHandler: ErrorRequestHandler = (
     Query: ${JSON.stringify(req.query, null, 2)}
     Params: ${JSON.stringify(req.params, null, 2)}
     IP: ${req.ip}
-    User Agent: ${req.get('user-agent')}
-    Timestamp: ${new Date().toISOString()}`
+    User Agent: ${req.get("user-agent")}
+    Timestamp: ${new Date().toISOString()}`,
   );
 
   if (err instanceof ValidationError) {
     res.status(400).json({
       error: "Validation Error",
       message: err.message,
-      data: err.details
+      data: err.details,
     });
     return;
   }
@@ -42,6 +43,14 @@ const errorHandler: ErrorRequestHandler = (
   if (err instanceof APIError) {
     res.status(400).json({
       error: "API Error",
+      message: err.message,
+    });
+    return;
+  }
+
+  if (err instanceof RPCError) {
+    res.status(400).json({
+      error: "RPC Error",
       message: err.message,
     });
     return;

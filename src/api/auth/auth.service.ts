@@ -16,9 +16,9 @@ export class AuthService {
         EX: NONCE_EXPIRY,
       });
     } catch (error: any) {
-      const err = new RedisError(error.message)
-      err.stack = error.stack
-      throw err
+      const err = new RedisError(error.message);
+      err.stack = error.stack;
+      throw err;
     }
 
     return nonce;
@@ -37,9 +37,9 @@ export class AuthService {
       await redisClient.del(key);
       return storedNonce === nonce;
     } catch (error: any) {
-      const err = new RedisError(error.message)
-      err.stack = error.stack
-      throw err 
+      const err = new RedisError(error.message);
+      err.stack = error.stack;
+      throw err;
     }
   }
 
@@ -64,10 +64,10 @@ export class AuthService {
       }
       return { address: fields.data.address, chainId: fields.data.chainId };
     } catch (error: any) {
-      if (error instanceof RedisError) throw error
-      const err = new AuthenticationError(error.message)
-      err.stack = error.stack
-      throw err
+      if (error instanceof RedisError) throw error;
+      const err = new AuthenticationError(error.message);
+      err.stack = error.stack;
+      throw err;
     }
   }
 

@@ -27,7 +27,10 @@ export const authenticateToken = (
   }
 
   try {
-    const decoded = jwt.verify(token, env.JWT_SECRET) as { address: string, chainId: number };
+    const decoded = jwt.verify(token, env.JWT_SECRET) as {
+      address: string;
+      chainId: number;
+    };
     req.user = decoded;
     next();
   } catch (error) {

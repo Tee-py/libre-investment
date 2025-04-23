@@ -19,5 +19,5 @@ export const env = cleanEnv(process.env, {
   JWT_SECRET: validStr(),
   REDIS_URL: validStr(),
   POLYGON_AMOY_RPC: url(),
-  BASE_SEPOLIA_RPC: url()
+  BASE_SEPOLIA_RPC: url(),
 });
