@@ -28,4 +28,24 @@ export class InvestmentController {
       res.json(data);
     },
   ];
+
+  static publishTransaction = []
+
+  static getInvestorBalance = [
+    async (req: Request, res: Response) => {
+      const investor = req.user?.address!
+      const chainId = req.user?.chainId!
+      const { fund } = req.params
+      const result = await InvestmentService.getFundBalance(investor, fund, chainId)
+      res.json(result)
+    }
+  ]
+
+  static getFundMetrics = [
+    async (req: Request, res: Response) => {
+      const { fund } = req.params
+      const result = await InvestmentService.getFundStats(fund)
+      res.json(result)
+    }
+  ]
 }

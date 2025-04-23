@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { cleanEnv, makeValidator, host, num, port, str } from "envalid";
+import { cleanEnv, makeValidator, host, port, str, url } from "envalid";
 
 dotenv.config();
 
@@ -18,4 +18,6 @@ export const env = cleanEnv(process.env, {
   CORS_ORIGIN: str({ default: "http://localhost:3000" }),
   JWT_SECRET: validStr(),
   REDIS_URL: validStr(),
+  POLYGON_AMOY_RPC: url(),
+  BASE_SEPOLIA_RPC: url()
 });

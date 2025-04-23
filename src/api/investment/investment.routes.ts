@@ -5,5 +5,7 @@ const router = Router();
 
 router.post("/transaction/invest", InvestmentController.getInvestTransaction);
 router.post("/transaction/redeem", InvestmentController.getRedeemTransaction);
+router.get("/balance/:fund", InvestmentController.getInvestorBalance);
+router.get("/:fund/metrics", InvestmentController.getFundMetrics)
 
 export default router;

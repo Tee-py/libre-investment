@@ -4,16 +4,12 @@ const prisma = new PrismaClient();
 
 const fundTokens = [
   {
-    address: '0x1234567890123456789012345678901234567890',
-    chainId: 1, // Ethereum Mainnet
-  },
-  {
     address: '0x0987654321098765432109876543210987654321',
-    chainId: 5, // Goerli
+    chainId: 84532, // Base Sepolia
   },
   {
     address: '0xabcdef1234567890abcdef1234567890abcdef12',
-    chainId: 137, // Polygon
+    chainId: 80002, // Polygon Amoy
   },
 ];
 
