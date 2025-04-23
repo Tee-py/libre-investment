@@ -52,15 +52,16 @@ export const getFundMetrics = withRpcErrorHandler(
     const encodedSharePrice =
       TOKEN_INTERFACE.encodeFunctionData("getSharePrice");
     const calls = [
-      { target: fundAddress, callData: encodedFundMetrics, allowFailure: true },
-      { target: fundAddress, callData: encodedSharePrice, allowFailure: true },
+      { target: fundAddress, allowFailure: false, callData: encodedFundMetrics },
+      { target: fundAddress, allowFailure: false, callData: encodedSharePrice },
     ];
     const multicall = new ethers.Contract(
       MULTICALL_ADDRESS,
       MULTICALL_ABI,
       provider,
     );
-    const results = await multicall.aggregate3.staticCall(calls);
+    const results = await multicall.callStatic.aggregate3(calls);
+
     return results;
   },
 );
