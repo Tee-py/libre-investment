@@ -46,13 +46,14 @@ export class InvestmentController {
     async (req: Request & PublishTransactionRequest, res: Response) => {
       const { type, signedTransaction, fund } = req.body;
       const user = req.user!;
-      const result = await InvestmentService.verifyAndPublishTransaction(
+      const txHash = await InvestmentService.verifyAndPublishTransaction(
         fund,
+        type,
         user.address,
         signedTransaction,
         user.chainId,
       );
-      res.json(result);
+      res.json({ hash: txHash });
     },
   ];
 

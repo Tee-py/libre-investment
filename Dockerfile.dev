@@ -19,4 +19,4 @@ COPY . .
 EXPOSE 4000
 
 # Start the application in development mode
-CMD ["npm", "run", "dev"] 
+CMD ["sh", "-c", "npm run db:deploy && npm run db:seed && npm run dev"]

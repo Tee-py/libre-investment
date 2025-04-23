@@ -50,9 +50,15 @@ const errorHandler: ErrorRequestHandler = (
   }
 
   if (err instanceof ContractError) {
+    let message = ""
+    if (err.details.message.includes("insufficient funds")) {
+      message = "Insufficient funds for transaction"
+    } else {
+      message = `Error during contract call: ${err.details.body?.error?.message || err.message}`
+    }
     res.status(400).json({
       error: "Contract Error",
-      message: `Error during contract call: ${err.details.body.error.message || err.message}`,
+      message,
     });
     return;
   }
@@ -60,7 +66,7 @@ const errorHandler: ErrorRequestHandler = (
   if (err instanceof RPCError) {
     res.status(400).json({
       error: "RPC Error",
-      message: `An Error occurred: ${err.details.body.error.message || err.message}`,
+      message: `An Error occurred: ${err.details.body?.error?.message || err.message}`,
     });
     return;
   }
@@ -93,5 +99,6 @@ const errorHandler: ErrorRequestHandler = (
     error: "Internal Server Error",
     message: "An unexpected error occurred",
   });
+  return
 };
 export default errorHandler;

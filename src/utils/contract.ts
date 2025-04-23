@@ -9,7 +9,7 @@ const MULTICALL_ADDRESS = "0xcA11bde05977b3631167028862bE2a173976CA11";
 
 export const createInvestTransactionData = (
   investor: string,
-  usdAmount: number,
+  usdAmount: number
 ) => {
   const usdAmountWithDecimals = ethers.utils.parseUnits(
     usdAmount.toString(),
@@ -118,20 +118,7 @@ export const submitTransaction = withRpcErrorHandler(
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
         const txResponse = await provider.sendTransaction(signedTx);
-        const receipt = await txResponse.wait();
-
-        if (receipt.status === 1) {
-          return {
-            success: false,
-            message: "Transaction Failed",
-            hash: receipt.transactionHash,
-          };
-        }
-        return {
-          success: true,
-          message: "Transaction success",
-          hash: receipt.transactionHash,
-        };
+        return txResponse.hash
       } catch (error: any) {
         if (!isRetryableError(error)) {
           throw error;

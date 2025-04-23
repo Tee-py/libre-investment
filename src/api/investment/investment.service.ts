@@ -13,6 +13,12 @@ import { ethers } from "ethers";
 const BALANCE_EXPIRY = 5 * 60; // 5 minute TTL for investor fund balance cache
 const METRICS_EXPIRY = 1 * 60; // 1 minute TTL for fund metrics cache
 
+enum TransactionStatus {
+  PENDING = "Pending",
+  SUCCESS = "Success",
+  FAILED = "Failed"
+}
+
 export class InvestmentService {
   static getInvestTransaction = async (
     investor: string,
@@ -33,6 +39,8 @@ export class InvestmentService {
       from: investor,
       to: fundToken.address,
       nonce: await provider.getTransactionCount(investor),
+      gasLimit: ethers.utils.hexlify(500000),
+      gasPrice: 200000000,
       chainId,
       data,
       value: "0x0",
@@ -58,6 +66,8 @@ export class InvestmentService {
       from: investor,
       to: fundToken.address,
       nonce: await provider.getTransactionCount(investor),
+      gasLimit: ethers.utils.hexlify(500000),
+      gasPrice: 200000000,
       chainId,
       data,
       value: "0x0",
@@ -66,6 +76,7 @@ export class InvestmentService {
 
   static verifyAndPublishTransaction = async (
     fundAddress: string,
+    txType: string,
     investor: string,
     signedTx: string,
     chainId: number,
@@ -94,10 +105,20 @@ export class InvestmentService {
         "Transaction `to` does not match specified fundAddress",
       );
     }
-
     const provider = getRpcProvider(chainId);
-    const result = await submitTransaction(signedTx, provider);
-    return result;
+    const txHash = await submitTransaction(signedTx, provider);
+    await prisma.transaction.create({
+      data: {
+        investor: investor,
+        type: txType,
+        status: TransactionStatus.PENDING,
+        fund: fundAddress,
+        chainId: chainId.toString(),
+        hash: txHash,
+        amount: 0,
+      },
+    })
+    return txHash;
   };
 
   static getFundBalance = async (
