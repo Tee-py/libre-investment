@@ -64,8 +64,8 @@ services:
     command: npx prisma studio --port 5555 --browser none
     ports:
       - "5555:5555"
-    env_file:
-      - .env.dev
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/libre_investment
     networks:
       - app-network
     depends_on:
