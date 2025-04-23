@@ -5,6 +5,8 @@ import {
   GetInvestTransactionRequest,
   getRedeemTransactionSchema,
   GetRedeemTransactionRequest,
+  publishTransactionSchema,
+  PublishTransactionRequest,
 } from "./investment.schema";
 import { validate } from "../middlewares/validate";
 
@@ -39,7 +41,20 @@ export class InvestmentController {
     },
   ];
 
-  static publishTransaction = [];
+  static publishTransaction = [
+    validate(publishTransactionSchema),
+    async (req: Request & PublishTransactionRequest, res: Response) => {
+      const { type, signedTransaction, fund } = req.body;
+      const user = req.user!;
+      const result = await InvestmentService.verifyAndPublishTransaction(
+        fund,
+        user.address,
+        signedTransaction,
+        user.chainId,
+      );
+      res.json(result);
+    },
+  ];
 
   static getInvestorBalance = [
     async (req: Request, res: Response) => {

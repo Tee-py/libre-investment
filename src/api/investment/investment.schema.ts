@@ -14,9 +14,20 @@ export const getRedeemTransactionSchema = z.object({
   }),
 });
 
+export const publishTransactionSchema = z.object({
+  body: z.object({
+    type: z.enum(["invest", "redeem"]),
+    fund: z.string().min(1, "fund is required"),
+    signedTransaction: z.string().min(1, "Signed transaction is required"),
+  }),
+});
+
 export type GetInvestTransactionRequest = z.infer<
   typeof getInvestTransactionSchema
 >;
 export type GetRedeemTransactionRequest = z.infer<
   typeof getRedeemTransactionSchema
+>;
+export type PublishTransactionRequest = z.infer<
+  typeof publishTransactionSchema
 >;

@@ -6,6 +6,7 @@ import {
   NotFoundError,
   APIError,
   RPCError,
+  ContractError,
 } from "../../utils/errors";
 
 const errorHandler: ErrorRequestHandler = (
@@ -44,6 +45,14 @@ const errorHandler: ErrorRequestHandler = (
     res.status(400).json({
       error: "API Error",
       message: err.message,
+    });
+    return;
+  }
+
+  if (err instanceof ContractError) {
+    res.status(400).json({
+      error: "Contract Error",
+      message: "Error during contract call",
     });
     return;
   }

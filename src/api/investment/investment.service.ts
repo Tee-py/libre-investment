@@ -10,8 +10,10 @@ import {
   createRedeemTransactionData,
   getBalanceOf,
   getFundMetrics,
+  submitTransaction,
 } from "../../utils/contract";
 import { getRpcProvider } from "../../utils/provider";
+import { ethers } from "ethers";
 
 export class InvestmentService {
   static getInvestTransaction = async (
@@ -58,6 +60,42 @@ export class InvestmentService {
     };
   };
 
+  static verifyAndPublishTransaction = async (
+    fundAddress: string,
+    investor: string,
+    signedTx: string,
+    chainId: number,
+  ) => {
+    const fundToken = await prisma.fundToken.findUnique({
+      where: { address: fundAddress, chainId: chainId },
+    });
+    if (!fundToken)
+      throw new APIError(
+        `FundToken with address ${fundAddress} and chain ${chainId} not found`,
+      );
+    const parsedTx = ethers.utils.parseTransaction(signedTx);
+
+    if (parsedTx.chainId !== chainId) {
+      throw new APIError(
+        `Invalid transaction. Expected chainId: ${chainId} found chainId: ${chainId}`,
+      );
+    }
+
+    if (parsedTx.from?.toLowerCase() !== investor.toLowerCase()) {
+      throw new APIError("Signer does not match expected sender");
+    }
+
+    if (parsedTx.to?.toLowerCase() !== fundAddress.toLowerCase()) {
+      throw new APIError(
+        "Transaction `to` does not match specified fundAddress",
+      );
+    }
+
+    const provider = getRpcProvider(chainId);
+    const result = await submitTransaction(signedTx, provider);
+    return result;
+  };
+
   static getFundBalance = async (
     investor: string,
     fund: string,
@@ -88,6 +126,5 @@ export class InvestmentService {
     const provider = getRpcProvider(fundToken.chainId);
     const stats = await getFundMetrics(fund, provider);
     return stats;
-    // returns metrics, and share price
   };
 }

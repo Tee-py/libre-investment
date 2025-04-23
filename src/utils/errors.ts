@@ -15,6 +15,16 @@ export class APIError extends Error {
   }
 }
 
+export class ContractError extends Error {
+  constructor(
+    message: string,
+    public details?: any,
+  ) {
+    super(message);
+    this.name = "Contract Error";
+  }
+}
+
 export class RPCError extends Error {
   constructor(
     message: string,
@@ -53,16 +63,42 @@ export function withRpcErrorHandler<T extends (...args: any[]) => Promise<any>>(
     try {
       return await fn(...args);
     } catch (error: any) {
+      const message = error.message?.toLowerCase() || "";
+
+      // Handle EVM/contract-specific errors
       if (
-        typeof error.message === "string" &&
-        error.message.includes("call revert exception")
+        message.includes("execution reverted") ||
+        message.includes("invalid opcode") ||
+        message.includes("gas required exceeds allowance") ||
+        error.code === "CALL_EXCEPTION" ||
+        error.reason
       ) {
-        const err = new RPCError("Execution reverted", {
+        throw new ContractError("Contract execution error", {
+          reason: error.reason,
+          code: error.code,
           message: error.message,
         });
-        err.stack = error.stack;
-        throw err;
       }
+
+      // Handle transport / network-level RPC errors
+      if (
+        error.code === "NETWORK_ERROR" ||
+        error.code === "SERVER_ERROR" ||
+        error.code === "TIMEOUT" ||
+        error.code === "ECONNRESET" ||
+        error.code === "ENOTFOUND" ||
+        message.includes("service unavailable") ||
+        message.includes("connection closed") ||
+        message.includes("could not detect network") ||
+        message.includes("failed to fetch")
+      ) {
+        throw new RPCError("RPC communication error", {
+          code: error.code,
+          message: error.message,
+        });
+      }
+
+      // Unknown/unclassified error
       throw error;
     }
   }) as T;
