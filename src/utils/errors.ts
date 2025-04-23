@@ -84,13 +84,16 @@ export function withRpcErrorHandler<T extends (...args: any[]) => Promise<any>>(
       if (
         error.code === "NETWORK_ERROR" ||
         error.code === "SERVER_ERROR" ||
-        error.code === "TIMEOUT" ||
+        error.code === "ETIMEDOUT" ||
         error.code === "ECONNRESET" ||
         error.code === "ENOTFOUND" ||
         message.includes("service unavailable") ||
         message.includes("connection closed") ||
         message.includes("could not detect network") ||
-        message.includes("failed to fetch")
+        message.includes("failed to fetch") ||
+        message.includes("ETIMEDOUT") ||
+        message.includes("serverError") ||
+        message.includes("NETWORK_ERROR")
       ) {
         throw new RPCError("RPC communication error", {
           code: error.code,
