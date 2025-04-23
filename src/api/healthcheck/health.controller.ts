@@ -5,10 +5,10 @@ import { logger } from "../../utils/logger";
 import { getRpcProvider } from "../../utils/provider";
 
 export const healthCheck = async (_req: Request, res: Response) => {
-  const uptime = Math.floor(process.uptime()) // total seconds
-  const minutes = Math.floor(uptime / 60)
-  const seconds = uptime % 60
-  
+  const uptime = Math.floor(process.uptime()); // total seconds
+  const minutes = Math.floor(uptime / 60);
+  const seconds = uptime % 60;
+
   const healthcheck = {
     uptime: `${minutes}m ${seconds}s`,
     message: "OK",
@@ -29,13 +29,13 @@ export const healthCheck = async (_req: Request, res: Response) => {
       baseSepoliaRpc: {
         status: "down",
         currentBlock: 0,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       },
       polygonAmoyRpc: {
         status: "down",
         currentBlock: 0,
-        timestamp: Date.now()
-      }
+        timestamp: Date.now(),
+      },
     },
   };
 
@@ -62,24 +62,24 @@ export const healthCheck = async (_req: Request, res: Response) => {
 
   // Base sepolia rpc connection checks
   try {
-    const provider = await getRpcProvider(84532)
-    const currBlock = await provider.getBlockNumber()
+    const provider = await getRpcProvider(84532);
+    const currBlock = await provider.getBlockNumber();
     healthcheck.checks.baseSepoliaRpc.currentBlock = currBlock;
-    healthcheck.checks.baseSepoliaRpc.status = "up"
+    healthcheck.checks.baseSepoliaRpc.status = "up";
   } catch (error: any) {
-    logger.error(`Base sepolia rpc check failed: ${error.code}`, error)
-    healthcheck.checks.baseSepoliaRpc.status = "down"
+    logger.error(`Base sepolia rpc check failed: ${error.code}`, error);
+    healthcheck.checks.baseSepoliaRpc.status = "down";
   }
 
   // Polygon amoy rpc connection checks
   try {
-    const provider = await getRpcProvider(80002)
-    const currBlock = await provider.getBlockNumber()
+    const provider = await getRpcProvider(80002);
+    const currBlock = await provider.getBlockNumber();
     healthcheck.checks.polygonAmoyRpc.currentBlock = currBlock;
-    healthcheck.checks.polygonAmoyRpc.status = "up"
+    healthcheck.checks.polygonAmoyRpc.status = "up";
   } catch (error: any) {
-    logger.error(`Polygon amoy rpc check failed: ${error.code}`, error)
-    healthcheck.checks.polygonAmoyRpc.status = "down"
+    logger.error(`Polygon amoy rpc check failed: ${error.code}`, error);
+    healthcheck.checks.polygonAmoyRpc.status = "down";
   }
 
   // Determine overall status

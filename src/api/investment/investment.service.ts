@@ -1,9 +1,4 @@
-// INVESTMENT SERVICE
-// POST /invest { amount: <xxx>, fund: <yyy> }
-// POST /redeem { fund: <yyy> }
-// POST /publishTx { type: invest | redeem, signedMessage: <yyy> }
-
-import { APIError, RPCError } from "../../utils/errors";
+import { APIError } from "../../utils/errors";
 import { prisma } from "../../utils/db";
 import {
   createInvestTransactionData,
@@ -14,6 +9,9 @@ import {
 } from "../../utils/contract";
 import { getRpcProvider } from "../../utils/provider";
 import { ethers } from "ethers";
+
+const BALANCE_EXPIRY = 5 * 60; // 5 minute TTL for investor fund balance cache
+const METRICS_EXPIRY = 1 * 60; // 1 minute TTL for fund metrics cache
 
 export class InvestmentService {
   static getInvestTransaction = async (
@@ -101,7 +99,6 @@ export class InvestmentService {
     fund: string,
     chainId: number,
   ) => {
-    // Implement a cache with redis to prevent frequent rpc calls
     const fundToken = await prisma.fundToken.findUnique({
       where: { address: fund, chainId: chainId },
     });
@@ -110,21 +107,20 @@ export class InvestmentService {
         `FundToken with address ${fund} and chain ${chainId} not found`,
       );
     const provider = getRpcProvider(chainId);
-    const balance = await getBalanceOf(fund, investor, provider);
+    const balance = await getBalanceOf(fund, investor, provider, { ttl: BALANCE_EXPIRY, key: `balance-${fund}-${investor}-${chainId}`});
     return {
       balance,
     };
   };
 
   static getFundStats = async (fund: string) => {
-    // Also implement a cache here with redis to prevent frequent rpc calls
     const fundToken = await prisma.fundToken.findUnique({
       where: { address: fund },
     });
     if (!fundToken)
       throw new APIError(`FundToken with address ${fund} not found`);
     const provider = getRpcProvider(fundToken.chainId);
-    const stats = await getFundMetrics(fund, provider);
+    const stats = await getFundMetrics(fund, provider, { ttl: METRICS_EXPIRY, key: `metrics-${fund}--${fundToken.chainId}`});
     return stats;
   };
 }

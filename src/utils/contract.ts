@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import { FundTokenABI, MULTICALL_ABI } from "./abi";
 import { RPCError, withRpcErrorHandler } from "./errors";
 import { logger } from "./logger";
+import { withRedisCache } from "./cache";
 
 const TOKEN_INTERFACE = new ethers.utils.Interface(FundTokenABI);
 const MULTICALL_ADDRESS = "0xcA11bde05977b3631167028862bE2a173976CA11";
@@ -34,41 +35,55 @@ export const createRedeemTransactionData = (
   ]);
 };
 
-export const getBalanceOf = withRpcErrorHandler(
-  async (
-    fundAddress: string,
-    investor: string,
-    provider: ethers.providers.JsonRpcProvider,
-  ) => {
-    const contract = new ethers.Contract(fundAddress, FundTokenABI, provider);
-    const balance = await contract.balanceOf(investor);
-    return balance.toString();
-  },
+export const getBalanceOf = withRedisCache(
+  withRpcErrorHandler(
+    async (
+      fundAddress: string,
+      investor: string,
+      provider: ethers.providers.JsonRpcProvider,
+    ) => {
+      const contract = new ethers.Contract(fundAddress, FundTokenABI, provider);
+      const balance = await contract.balanceOf(investor);
+      return balance.toString();
+    },
+  ),
 );
 
-export const getFundMetrics = withRpcErrorHandler(
-  async (fundAddress: string, provider: ethers.providers.JsonRpcProvider) => {
-    const encodedFundMetrics =
-      TOKEN_INTERFACE.encodeFunctionData("getFundMetrics");
-    const encodedSharePrice =
-      TOKEN_INTERFACE.encodeFunctionData("getSharePrice");
-    const calls = [
-      {
-        target: fundAddress,
-        allowFailure: false,
-        callData: encodedFundMetrics,
-      },
-      { target: fundAddress, allowFailure: false, callData: encodedSharePrice },
-    ];
-    const multicall = new ethers.Contract(
-      MULTICALL_ADDRESS,
-      MULTICALL_ABI,
-      provider,
-    );
-    const results = await multicall.callStatic.aggregate3(calls);
-
-    return results;
-  },
+export const getFundMetrics = withRedisCache(
+  withRpcErrorHandler(
+    async (fundAddress: string, provider: ethers.providers.JsonRpcProvider) => {
+      const encodedFundMetrics =
+        TOKEN_INTERFACE.encodeFunctionData("getFundMetrics");
+      const encodedSharePrice =
+        TOKEN_INTERFACE.encodeFunctionData("getSharePrice");
+      const calls = [
+        {
+          target: fundAddress,
+          allowFailure: false,
+          callData: encodedFundMetrics,
+        },
+        {
+          target: fundAddress,
+          allowFailure: false,
+          callData: encodedSharePrice,
+        },
+      ];
+      const multicall = new ethers.Contract(
+        MULTICALL_ADDRESS,
+        MULTICALL_ABI,
+        provider,
+      );
+      const [[_, fundMetricsData], [__, sharePriceData]] = await multicall.callStatic.aggregate3(calls);
+      const [[totalAssetValue, sharesSupply, lastUpdateTime]] = TOKEN_INTERFACE.decodeFunctionResult("getFundMetrics", fundMetricsData)
+      const sharePrice = TOKEN_INTERFACE.decodeFunctionResult("getSharePrice", sharePriceData)
+      return {
+        totalAssetValue: totalAssetValue.toString(),
+        sharesSupply: sharesSupply.toString(),
+        lastUpdateTime: lastUpdateTime.toString(),
+        sharePrice: sharePrice.toString()
+      }
+    },
+  ),
 );
 
 function isRetryableError(error: any): boolean {
@@ -82,7 +97,14 @@ function isRetryableError(error: any): boolean {
     message.includes("nonce too low") ||
     message.includes("replacement transaction underpriced") ||
     message.includes("failed to check for transaction receipt") ||
-    message.includes("transaction was not mined within")
+    message.includes("transaction was not mined within") ||
+    message.includes("service unavailable") ||
+    message.includes("connection closed") ||
+    message.includes("could not detect network") ||
+    message.includes("failed to fetch") ||
+    message.includes("ETIMEDOUT") ||
+    message.includes("serverError") ||
+    message.includes("NETWORK_ERROR")
   );
 }
 

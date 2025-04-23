@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 const fundTokens = [
   {
-    address: '0x0987654321098765432109876543210987654321',
+    address: '0xcDF53d6fbd1d92FB623765D863eDB1604D77E636',
     chainId: 84532, // Base Sepolia
   },
   {
