@@ -52,7 +52,7 @@ const errorHandler: ErrorRequestHandler = (
   if (err instanceof ContractError) {
     res.status(400).json({
       error: "Contract Error",
-      message: "Error during contract call",
+      message: `Error during contract call: ${err.details.body.error.message || err.message}`,
     });
     return;
   }
@@ -60,7 +60,7 @@ const errorHandler: ErrorRequestHandler = (
   if (err instanceof RPCError) {
     res.status(400).json({
       error: "RPC Error",
-      message: err.message,
+      message: `An Error occurred: ${err.details.body.error.message || err.message}`,
     });
     return;
   }

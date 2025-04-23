@@ -146,8 +146,8 @@ export const submitTransaction = withRpcErrorHandler(
       }
     }
     throw new RPCError(
-      `Transaction failed after ${maxRetries} retries: ${lastErr.message}`,
-      { stack: lastErr.stack, code: lastErr.code },
+      `Transaction failed after ${maxRetries} retries`,
+      { stack: lastErr.stack, code: lastErr.code, body: JSON.parse(lastErr.body || "{}") },
     );
   },
 );

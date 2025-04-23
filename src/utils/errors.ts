@@ -77,6 +77,7 @@ export function withRpcErrorHandler<T extends (...args: any[]) => Promise<any>>(
           reason: error.reason,
           code: error.code,
           message: error.message,
+          body: JSON.parse(error.body || "{}")
         });
       }
 
@@ -98,6 +99,7 @@ export function withRpcErrorHandler<T extends (...args: any[]) => Promise<any>>(
         throw new RPCError("RPC communication error", {
           code: error.code,
           message: error.message,
+          body: JSON.parse(error.body || "{}")
         });
       }
 

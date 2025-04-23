@@ -27,10 +27,13 @@ export class InvestmentService {
       throw new APIError(
         `FundToken with address ${fund} and chain ${chainId} not found`,
       );
+    const provider = getRpcProvider(chainId)
     const data = createInvestTransactionData(investor, amount);
     return {
       from: investor,
       to: fundToken.address,
+      nonce: await provider.getTransactionCount(investor),
+      chainId,
       data,
       value: "0x0",
     };
@@ -49,10 +52,13 @@ export class InvestmentService {
       throw new APIError(
         `FundToken with address ${fund} and chain ${chainId} not found`,
       );
+    const provider = getRpcProvider(chainId)
     const data = createRedeemTransactionData(investor, shares);
     return {
       from: investor,
       to: fundToken.address,
+      nonce: await provider.getTransactionCount(investor),
+      chainId,
       data,
       value: "0x0",
     };
