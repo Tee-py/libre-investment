@@ -13,7 +13,7 @@ A secure and scalable API for managing investment transactions in fund tokens ac
 
 1. 📥 Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/Tee-py/libre-investment.git
 cd libre-investment
 ```
 
@@ -413,7 +413,8 @@ Possible Error Responses:
 
 ## 📋 Postman Collection
 
-A Postman collection is available for testing the API endpoints. You can import it from:
+A Postman collection is available for testing the API endpoints.
+
 [<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://app.getpostman.com/run-collection/13640451-2a45db3f-fac7-49de-a3e1-b85606c227ce?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D13640451-2a45db3f-fac7-49de-a3e1-b85606c227ce%26entityType%3Dcollection%26workspaceId%3D947fdbb0-0243-41b3-804c-315a81b5da5c)
 
 ### 🧪 Test Environment
