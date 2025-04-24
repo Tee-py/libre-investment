@@ -1,7 +1,6 @@
 import { logger } from "../utils/logger";
 import { getRpcProvider } from "../utils/provider";
 import { prisma } from "../utils/db";
-import { parseLogs } from "../indexer/parser";
 
 async function monitorTransactions() {
   const pendingTxs = await prisma.transaction.findMany({
