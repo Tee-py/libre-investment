@@ -38,13 +38,14 @@ export async function processTransactions(
 
     try {
       if (parsed.type === "Investment") {
+        logger.info("💸 Found Invest Log")
         const { investor, usdAmount, sharesIssued, sharePrice } = parsed.args;
 
         // Update matching transaction
         await prisma.transaction.update({
           where: { hash: txHash },
           data: {
-            status: "SUCCESS",
+            status: "Success",
             amount: usdAmount,
           },
         });
@@ -64,12 +65,13 @@ export async function processTransactions(
       }
 
       if (parsed.type === "Redemption") {
+        logger.info("💸 Found Redeem Log")
         const { investor, shares, usdAmount, sharePrice } = parsed.args;
 
         await prisma.transaction.update({
           where: { hash: txHash },
           data: {
-            status: "SUCCESS",
+            status: "Success",
             amount: usdAmount,
           },
         });

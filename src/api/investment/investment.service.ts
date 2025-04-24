@@ -66,7 +66,7 @@ export class InvestmentService {
       to: fundToken.address,
       nonce: await provider.getTransactionCount(investor),
       gasLimit: ethers.utils.hexlify(1000000),
-      gasPrice: 300000000,
+      gasPrice: 200000000,
       chainId,
       data,
       value: "0x0",
@@ -108,7 +108,7 @@ export class InvestmentService {
     const txHash = await submitTransaction(signedTx, provider);
     await prisma.transaction.create({
       data: {
-        investor: investor,
+        investor: investor.toLowerCase(),
         type: txType,
         status: TransactionStatus.PENDING,
         fund: fundAddress,
@@ -155,4 +155,44 @@ export class InvestmentService {
     });
     return stats;
   };
+
+  static fetchTransactionHistory = async (
+    investor: string,
+    chainId: number,
+    page = 1
+  ) => {
+    const pageSize = 10
+    const skip = (page - 1) * pageSize
+
+    console.log(investor, chainId)
+  
+    const [transactions, total] = await Promise.all([
+      prisma.transaction.findMany({
+        where: {
+          investor: investor.toLowerCase(),
+          chainId: chainId.toString(),
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        skip,
+        take: pageSize,
+      }),
+      prisma.transaction.count({
+        where: {
+          investor: investor.toLowerCase(),
+          chainId: chainId.toString(),
+        },
+      }),
+    ])
+  
+    return {
+      data: transactions,
+      page,
+      pageSize,
+      total,
+      totalPages: Math.ceil(total / pageSize),
+    }
+  }
+  
 }

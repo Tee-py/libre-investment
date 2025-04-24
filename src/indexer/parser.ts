@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import { logger } from "../utils/logger";
 
 const investmentTopic = ethers.utils.id(
   "Investment(address,uint256,uint256,uint256)",
@@ -40,7 +41,9 @@ export type ParsedFundEvent =
 
 export function parseLogs(log: ethers.providers.Log): ParsedFundEvent | null {
   try {
+    console.log("Logging topics and data")
     const { topics, data } = log;
+    console.log(topics[0], investmentTopic, redemptionTopic, metricsUpdatedTopic)
 
     if (topics[0] === investmentTopic) {
       const investor = ethers.utils.getAddress(
@@ -103,6 +106,7 @@ export function parseLogs(log: ethers.providers.Log): ParsedFundEvent | null {
 
     return null;
   } catch (err) {
+    logger.error("Error occurred while parsing logs", err)
     return null;
   }
 }

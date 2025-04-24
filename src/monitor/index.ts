@@ -1,6 +1,7 @@
 import { logger } from "../utils/logger"
 import { getRpcProvider } from "../utils/provider"
 import { prisma } from "../utils/db"
+import { parseLogs } from "../indexer/parser"
 
 async function monitorTransactions() {
   const pendingTxs = await prisma.transaction.findMany({
@@ -39,6 +40,13 @@ async function monitorTransactions() {
       }
 
       const status = receipt.status === 1 ? "Success" : "Failed"
+
+      const logs = receipt.logs
+      for (const log of logs) {
+        console.log(log)
+        const parsed = await parseLogs(log)
+        console.log(parsed)
+      }
 
       await prisma.transaction.update({
         where: { hash: tx.hash },

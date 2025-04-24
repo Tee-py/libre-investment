@@ -84,7 +84,7 @@ export const getFundMetrics = withRedisCache(
       return {
         totalAssetValue: totalAssetValue.toString(),
         sharesSupply: sharesSupply.toString(),
-        lastUpdateTime: lastUpdateTime.toString(),
+        updatedAt: lastUpdateTime.toString(),
         sharePrice: sharePrice.toString(),
       };
     },
