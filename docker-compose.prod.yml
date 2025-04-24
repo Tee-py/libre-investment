@@ -15,6 +15,33 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+  
+  indexer:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: npm run indexer:start
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
+    networks:
+      - app-network
+
+  monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: npm run monitor:start
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
 
 networks:
   app-network:

@@ -24,6 +24,48 @@ services:
     networks:
       - app-network
 
+  indexer:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npm run indexer:dev
+    env_file:
+      - .env.dev
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/libre_investment
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npm run monitor:dev
+    env_file:
+      - .env.dev
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/libre_investment
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
   db:
     image: postgres:16-alpine
     ports:

@@ -22,9 +22,14 @@ export function withRedisCache<T extends (...args: any[]) => Promise<any>>(
     }
 
     const result = await fn(...actualArgs);
-    await redisClient.set(key, JSON.stringify(result), {
-      EX: ttl,
-    });
+    if (ttl === 0) {
+      console.log("Updating cache with no ttl")
+      await redisClient.set(key, JSON.stringify(result));
+    } else {
+      await redisClient.set(key, JSON.stringify(result), {
+        EX: ttl,
+      });
+    }
     return result;
   }) as (...args: [...Parameters<T>, CacheOptions]) => ReturnType<T>;
 }

@@ -58,7 +58,7 @@ export async function processTransactions(
             sharePrice,
             txHash,
             fundAddress,
-            chainId,
+            chainId: chainId.toString(),
           },
         });
       }
@@ -82,7 +82,7 @@ export async function processTransactions(
             sharePrice,
             txHash,
             fundAddress,
-            chainId,
+            chainId: chainId.toString(),
           },
         });
       }
@@ -97,7 +97,7 @@ export async function processTransactions(
             sharePrice,
             txHash,
             fundAddress,
-            chainId,
+            chainId: chainId.toString(),
           },
         });
 

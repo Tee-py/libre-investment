@@ -11,7 +11,6 @@ import { getRpcProvider } from "../../utils/provider";
 import { ethers } from "ethers";
 
 const BALANCE_EXPIRY = 5 * 60; // 5 minute TTL for investor fund balance cache
-const METRICS_EXPIRY = 1 * 60; // 1 minute TTL for fund metrics cache
 
 enum TransactionStatus {
   PENDING = "Pending",
@@ -66,8 +65,8 @@ export class InvestmentService {
       from: investor,
       to: fundToken.address,
       nonce: await provider.getTransactionCount(investor),
-      gasLimit: ethers.utils.hexlify(500000),
-      gasPrice: 200000000,
+      gasLimit: ethers.utils.hexlify(1000000),
+      gasPrice: 300000000,
       chainId,
       data,
       value: "0x0",
@@ -151,8 +150,8 @@ export class InvestmentService {
       throw new APIError(`FundToken with address ${fund} not found`);
     const provider = getRpcProvider(fundToken.chainId);
     const stats = await getFundMetrics(fund, provider, {
-      ttl: METRICS_EXPIRY,
-      key: `metrics-${fund}--${fundToken.chainId}`,
+      ttl: 0,
+      key: `metrics-${fund.toLowerCase()}-${fundToken.chainId}`,
     });
     return stats;
   };

@@ -28,7 +28,8 @@ model Transaction {
   fund      String
   chainId   String
   hash      String   @unique
-  amount    Decimal  @db.Decimal(78, 18) // high precision for token values
+  amount    Decimal  @db.Decimal(78, 18)
+  retryCount Int     @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

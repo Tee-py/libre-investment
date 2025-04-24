@@ -27,7 +27,7 @@ export const createRedeemTransactionData = (
 ): string => {
   const sharesWithDecimals = ethers.utils.parseUnits(
     shares.toString(),
-    18, // default decimals of ERC20 tokens
+    6,
   );
   return TOKEN_INTERFACE.encodeFunctionData("redeem", [
     investor,
