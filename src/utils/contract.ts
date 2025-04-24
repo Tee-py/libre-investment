@@ -25,10 +25,7 @@ export const createRedeemTransactionData = (
   investor: string,
   shares: number,
 ): string => {
-  const sharesWithDecimals = ethers.utils.parseUnits(
-    shares.toString(),
-    6,
-  );
+  const sharesWithDecimals = ethers.utils.parseUnits(shares.toString(), 6);
   return TOKEN_INTERFACE.encodeFunctionData("redeem", [
     investor,
     sharesWithDecimals,

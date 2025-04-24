@@ -113,7 +113,7 @@ export class InvestmentService {
         status: TransactionStatus.PENDING,
         fund: fundAddress,
         chainId: chainId.toString(),
-        hash: txHash,
+        hash: txHash.toLowerCase(),
         amount: 0,
       },
     });
@@ -159,13 +159,11 @@ export class InvestmentService {
   static fetchTransactionHistory = async (
     investor: string,
     chainId: number,
-    page = 1
+    page = 1,
   ) => {
-    const pageSize = 10
-    const skip = (page - 1) * pageSize
+    const pageSize = 10;
+    const skip = (page - 1) * pageSize;
 
-    console.log(investor, chainId)
-  
     const [transactions, total] = await Promise.all([
       prisma.transaction.findMany({
         where: {
@@ -184,15 +182,14 @@ export class InvestmentService {
           chainId: chainId.toString(),
         },
       }),
-    ])
-  
+    ]);
+
     return {
       data: transactions,
       page,
       pageSize,
       total,
       totalPages: Math.ceil(total / pageSize),
-    }
-  }
-  
+    };
+  };
 }

@@ -23,7 +23,6 @@ export function withRedisCache<T extends (...args: any[]) => Promise<any>>(
 
     const result = await fn(...actualArgs);
     if (ttl === 0) {
-      console.log("Updating cache with no ttl")
       await redisClient.set(key, JSON.stringify(result));
     } else {
       await redisClient.set(key, JSON.stringify(result), {

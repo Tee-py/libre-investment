@@ -81,9 +81,13 @@ export class InvestmentController {
 
   static transactionHistory = [
     async (req: Request, res: Response) => {
-      const { page } = req.query
-      const result = await InvestmentService.fetchTransactionHistory(req.user?.address!, req.user?.chainId!, Number(page || 1))
-      res.json(result)
-    }
-  ]
+      const { page } = req.query;
+      const result = await InvestmentService.fetchTransactionHistory(
+        req.user?.address!,
+        req.user?.chainId!,
+        Number(page || 1),
+      );
+      res.json(result);
+    },
+  ];
 }

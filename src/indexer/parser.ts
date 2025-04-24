@@ -41,20 +41,18 @@ export type ParsedFundEvent =
 
 export function parseLogs(log: ethers.providers.Log): ParsedFundEvent | null {
   try {
-    console.log("Logging topics and data")
     const { topics, data } = log;
-    console.log(topics[0], investmentTopic, redemptionTopic, metricsUpdatedTopic)
 
     if (topics[0] === investmentTopic) {
-      const investor = ethers.utils.getAddress(
-        ethers.utils.hexZeroPad(topics[1], 20),
-      );
+      logger.info("Found invest logs");
+      const investor = ethers.utils
+        .getAddress(ethers.utils.hexStripZeros(topics[1]))
+        .toLowerCase();
       const [usdAmount, sharesIssued, sharePrice] =
         ethers.utils.defaultAbiCoder.decode(
           ["uint256", "uint256", "uint256"],
           data,
         );
-
       return {
         type: "Investment",
         args: {
@@ -67,9 +65,10 @@ export function parseLogs(log: ethers.providers.Log): ParsedFundEvent | null {
     }
 
     if (topics[0] === redemptionTopic) {
-      const investor = ethers.utils.getAddress(
-        ethers.utils.hexZeroPad(topics[1], 20),
-      );
+      logger.info("Found redeem logs");
+      const investor = ethers.utils
+        .getAddress(ethers.utils.hexStripZeros(topics[1]))
+        .toLowerCase();
       const [shares, usdAmount, sharePrice] =
         ethers.utils.defaultAbiCoder.decode(
           ["uint256", "uint256", "uint256"],
@@ -106,7 +105,7 @@ export function parseLogs(log: ethers.providers.Log): ParsedFundEvent | null {
 
     return null;
   } catch (err) {
-    logger.error("Error occurred while parsing logs", err)
+    logger.error("Error occurred while parsing logs", err);
     return null;
   }
 }
