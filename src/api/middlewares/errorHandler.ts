@@ -50,11 +50,11 @@ const errorHandler: ErrorRequestHandler = (
   }
 
   if (err instanceof ContractError) {
-    let message = ""
+    let message = "";
     if (err.details.message.includes("insufficient funds")) {
-      message = "Insufficient funds for transaction"
+      message = "Insufficient funds for transaction";
     } else {
-      message = `Error during contract call: ${err.details.body?.error?.message || err.message}`
+      message = `Error during contract call: ${err.details.body?.error?.message || err.message}`;
     }
     res.status(400).json({
       error: "Contract Error",
@@ -99,6 +99,6 @@ const errorHandler: ErrorRequestHandler = (
     error: "Internal Server Error",
     message: "An unexpected error occurred",
   });
-  return
+  return;
 };
 export default errorHandler;

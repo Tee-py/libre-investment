@@ -9,7 +9,7 @@ const MULTICALL_ADDRESS = "0xcA11bde05977b3631167028862bE2a173976CA11";
 
 export const createInvestTransactionData = (
   investor: string,
-  usdAmount: number
+  usdAmount: number,
 ) => {
   const usdAmountWithDecimals = ethers.utils.parseUnits(
     usdAmount.toString(),
@@ -73,15 +73,20 @@ export const getFundMetrics = withRedisCache(
         MULTICALL_ABI,
         provider,
       );
-      const [[_, fundMetricsData], [__, sharePriceData]] = await multicall.callStatic.aggregate3(calls);
-      const [[totalAssetValue, sharesSupply, lastUpdateTime]] = TOKEN_INTERFACE.decodeFunctionResult("getFundMetrics", fundMetricsData)
-      const sharePrice = TOKEN_INTERFACE.decodeFunctionResult("getSharePrice", sharePriceData)
+      const [[_, fundMetricsData], [__, sharePriceData]] =
+        await multicall.callStatic.aggregate3(calls);
+      const [[totalAssetValue, sharesSupply, lastUpdateTime]] =
+        TOKEN_INTERFACE.decodeFunctionResult("getFundMetrics", fundMetricsData);
+      const sharePrice = TOKEN_INTERFACE.decodeFunctionResult(
+        "getSharePrice",
+        sharePriceData,
+      );
       return {
         totalAssetValue: totalAssetValue.toString(),
         sharesSupply: sharesSupply.toString(),
         lastUpdateTime: lastUpdateTime.toString(),
-        sharePrice: sharePrice.toString()
-      }
+        sharePrice: sharePrice.toString(),
+      };
     },
   ),
 );
@@ -118,7 +123,7 @@ export const submitTransaction = withRpcErrorHandler(
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
         const txResponse = await provider.sendTransaction(signedTx);
-        return txResponse.hash
+        return txResponse.hash;
       } catch (error: any) {
         if (!isRetryableError(error)) {
           throw error;
@@ -132,9 +137,10 @@ export const submitTransaction = withRpcErrorHandler(
         }
       }
     }
-    throw new RPCError(
-      `Transaction failed after ${maxRetries} retries`,
-      { stack: lastErr.stack, code: lastErr.code, body: JSON.parse(lastErr.body || "{}") },
-    );
+    throw new RPCError(`Transaction failed after ${maxRetries} retries`, {
+      stack: lastErr.stack,
+      code: lastErr.code,
+      body: JSON.parse(lastErr.body || "{}"),
+    });
   },
 );

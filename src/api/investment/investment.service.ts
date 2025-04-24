@@ -16,7 +16,7 @@ const METRICS_EXPIRY = 1 * 60; // 1 minute TTL for fund metrics cache
 enum TransactionStatus {
   PENDING = "Pending",
   SUCCESS = "Success",
-  FAILED = "Failed"
+  FAILED = "Failed",
 }
 
 export class InvestmentService {
@@ -33,7 +33,7 @@ export class InvestmentService {
       throw new APIError(
         `FundToken with address ${fund} and chain ${chainId} not found`,
       );
-    const provider = getRpcProvider(chainId)
+    const provider = getRpcProvider(chainId);
     const data = createInvestTransactionData(investor, amount);
     return {
       from: investor,
@@ -60,7 +60,7 @@ export class InvestmentService {
       throw new APIError(
         `FundToken with address ${fund} and chain ${chainId} not found`,
       );
-    const provider = getRpcProvider(chainId)
+    const provider = getRpcProvider(chainId);
     const data = createRedeemTransactionData(investor, shares);
     return {
       from: investor,
@@ -117,7 +117,7 @@ export class InvestmentService {
         hash: txHash,
         amount: 0,
       },
-    })
+    });
     return txHash;
   };
 
@@ -134,7 +134,10 @@ export class InvestmentService {
         `FundToken with address ${fund} and chain ${chainId} not found`,
       );
     const provider = getRpcProvider(chainId);
-    const balance = await getBalanceOf(fund, investor, provider, { ttl: BALANCE_EXPIRY, key: `balance-${fund}-${investor}-${chainId}`});
+    const balance = await getBalanceOf(fund, investor, provider, {
+      ttl: BALANCE_EXPIRY,
+      key: `balance-${fund}-${investor}-${chainId}`,
+    });
     return {
       balance,
     };
@@ -147,7 +150,10 @@ export class InvestmentService {
     if (!fundToken)
       throw new APIError(`FundToken with address ${fund} not found`);
     const provider = getRpcProvider(fundToken.chainId);
-    const stats = await getFundMetrics(fund, provider, { ttl: METRICS_EXPIRY, key: `metrics-${fund}--${fundToken.chainId}`});
+    const stats = await getFundMetrics(fund, provider, {
+      ttl: METRICS_EXPIRY,
+      key: `metrics-${fund}--${fundToken.chainId}`,
+    });
     return stats;
   };
 }
