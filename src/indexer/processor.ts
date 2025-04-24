@@ -49,13 +49,6 @@ export async function processLog(log: ethers.providers.Log) {
         ]);
       } else {
         logger.info(`Skipping duplicate investment event for tx: ${txHash}`);
-        await prisma.transaction.update({
-          where: { hash: txHash.toLowerCase() },
-          data: {
-            status: "Success",
-            amount: usdAmount,
-          },
-        })
       }
     }
 
@@ -93,13 +86,6 @@ export async function processLog(log: ethers.providers.Log) {
         ]);
       } else {
         logger.info(`Skipping duplicate redemption event for tx: ${txHash}`);
-        await prisma.transaction.update({
-          where: { hash: txHash.toLowerCase() },
-          data: {
-            status: "Success",
-            amount: usdAmount,
-          },
-        })
       }
     }
 

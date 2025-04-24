@@ -189,5 +189,3 @@ Defined in [`prisma/schema.prisma`](prisma/schema.prisma):
    - Publishes transactions to RPC
    - Reads/writes investor and transaction data from DB
    - Caches fund metrics & balances in Redis
-
----
